@@ -1,0 +1,52 @@
+{
+    "id": "/my_folder/gateway",
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "private_registry/gateway",
+            "forcePullImage": true,
+            "network": "HOST",
+            "portMappings": [
+               { "containerPort": 8080, "hostPort": 0 }
+            ],
+            "parameters": [
+                {
+                    "key": "log-driver",
+                    "value": "syslog"
+                },
+                {
+                    "key": "memory",
+                    "value": "500M"
+                },
+                {
+                    "key": "memory-swap",
+                    "value": "0"
+                }
+            ]
+        }
+    },
+    "healthChecks": [{
+      "protocol": "HTTP",
+      "path": "/health",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }],
+    "upgradeStrategy": {
+      "minimumHealthCapacity": 0.5,
+      "maximumOverCapacity": 0.2
+    },
+    "cpus": 0.5,
+    "mem": 500,
+    "env": {
+        "APP": "gateway",
+        "CONTAINER_NAME": "gateway"
+    },
+    "instances": 1,
+    "constraints": [
+      ["hostname", "UNIQUE"],
+      ["rack_id", "GROUP_BY"]
+    ]
+}
